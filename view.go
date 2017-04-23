@@ -10,7 +10,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/nsf/termbox-go"
+	"github.com/gdamore/tcell/termbox"
 )
 
 // A View is a window. It maintains its own internal buffer and cursor

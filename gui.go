@@ -7,7 +7,7 @@ package gocui
 import (
 	"errors"
 
-	"github.com/nsf/termbox-go"
+	"github.com/gdamore/tcell/termbox"
 )
 
 var (
@@ -118,8 +118,10 @@ func (g *Gui) Rune(x, y int) (rune, error) {
 	if x < 0 || y < 0 || x >= g.maxX || y >= g.maxY {
 		return ' ', errors.New("invalid point")
 	}
-	c := termbox.CellBuffer()[y*g.maxX+x]
-	return c.Ch, nil
+	return termbox.GetCellRune(x, y), nil
+	// Note: tcell's termbox compatability layer is not 100% compatible with gocui.
+	//c := termbox.CellBuffer()[y*g.maxX+x]
+	//return c.Ch, nil
 }
 
 // SetView creates a new view with its top-left corner at (x0, y0)
