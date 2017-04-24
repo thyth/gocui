@@ -117,6 +117,11 @@ func (g *Gui) Size() (x, y int) {
 	return g.maxX, g.maxY
 }
 
+// SetSize attempts to resize the underlying terminal or quasiterm.
+func (g *Gui) SetSize(w, h int) {
+	g.qb.SetSize(w, h)
+}
+
 // SetRune writes a rune at the given point, relative to the top-left
 // corner of the terminal. It checks if the position is valid and applies
 // the given colors.
