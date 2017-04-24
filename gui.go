@@ -6,6 +6,7 @@ package gocui
 
 import (
 	"errors"
+	"io"
 
 	termbox "github.com/gdamore/tcell/quasibox"
 )
@@ -72,8 +73,20 @@ type Gui struct {
 
 // NewGui returns a new Gui object with a given output mode.
 func NewGui(mode OutputMode) (*Gui, error) {
+	return newGui(mode, termbox.InitLocal)
+}
+
+// NewQuasiGui returns a new Gui object that will be manifested on the specified
+// input/output writers instead of on a local terminal.
+func NewQuasiGui(mode OutputMode, input io.ReadCloser, output io.WriteCloser, termtype string, w, h int) (*Gui, error) {
+	return newGui(mode, func() (*termbox.Quasibox, error) {
+		return termbox.Init(input, output, termtype, w, h)
+	})
+}
+
+func newGui(mode OutputMode, qbGen func() (*termbox.Quasibox, error)) (*Gui, error) {
 	g := &Gui{}
-	if qb, err := termbox.InitLocal(); err != nil {
+	if qb, err := qbGen(); err != nil {
 		return nil, err
 	} else {
 		g.qb = qb
