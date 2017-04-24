@@ -7,7 +7,7 @@ package gocui
 import (
 	"errors"
 
-	"github.com/gdamore/tcell/termbox"
+	termbox "github.com/gdamore/tcell/quasibox"
 )
 
 var (
@@ -41,6 +41,8 @@ type Gui struct {
 	maxX, maxY  int
 	outputMode  OutputMode
 
+	qb *termbox.Quasibox
+
 	// BgColor and FgColor allow to configure the background and foreground
 	// colors of the GUI.
 	BgColor, FgColor Attribute
@@ -70,19 +72,20 @@ type Gui struct {
 
 // NewGui returns a new Gui object with a given output mode.
 func NewGui(mode OutputMode) (*Gui, error) {
-	if err := termbox.Init(); err != nil {
+	g := &Gui{}
+	if qb, err := termbox.InitLocal(); err != nil {
 		return nil, err
+	} else {
+		g.qb = qb
 	}
 
-	g := &Gui{}
-
 	g.outputMode = mode
-	termbox.SetOutputMode(termbox.OutputMode(mode))
+	g.qb.SetOutputMode(termbox.OutputMode(mode))
 
 	g.tbEvents = make(chan termbox.Event, 20)
 	g.userEvents = make(chan userEvent, 20)
 
-	g.maxX, g.maxY = termbox.Size()
+	g.maxX, g.maxY = g.qb.Size()
 
 	g.BgColor, g.FgColor = ColorBlack, ColorWhite
 	g.SelBgColor, g.SelFgColor = ColorBlack, ColorWhite
@@ -93,7 +96,7 @@ func NewGui(mode OutputMode) (*Gui, error) {
 // Close finalizes the library. It should be called after a successful
 // initialization and when gocui is not needed anymore.
 func (g *Gui) Close() {
-	termbox.Close()
+	g.qb.Close()
 }
 
 // Size returns the terminal's size.
@@ -108,7 +111,7 @@ func (g *Gui) SetRune(x, y int, ch rune, fgColor, bgColor Attribute) error {
 	if x < 0 || y < 0 || x >= g.maxX || y >= g.maxY {
 		return errors.New("invalid point")
 	}
-	termbox.SetCell(x, y, ch, termbox.Attribute(fgColor), termbox.Attribute(bgColor))
+	g.qb.SetCell(x, y, ch, termbox.Attribute(fgColor), termbox.Attribute(bgColor))
 	return nil
 }
 
@@ -118,7 +121,7 @@ func (g *Gui) Rune(x, y int) (rune, error) {
 	if x < 0 || y < 0 || x >= g.maxX || y >= g.maxY {
 		return ' ', errors.New("invalid point")
 	}
-	return termbox.GetCellRune(x, y), nil
+	return g.qb.GetCellRune(x, y), nil
 	// Note: tcell's termbox compatability layer is not 100% compatible with gocui.
 	//c := termbox.CellBuffer()[y*g.maxX+x]
 	//return c.Ch, nil
@@ -146,7 +149,7 @@ func (g *Gui) SetView(name string, x0, y0, x1, y1 int) (*View, error) {
 		return v, nil
 	}
 
-	v := newView(name, x0, y0, x1, y1, g.outputMode)
+	v := newView(g, name, x0, y0, x1, y1, g.outputMode)
 	v.BgColor, v.FgColor = g.BgColor, g.FgColor
 	v.SelBgColor, v.SelFgColor = g.SelBgColor, g.SelFgColor
 	g.views = append(g.views, v)
@@ -338,7 +341,7 @@ func (g *Gui) SetManagerFunc(manager func(v *Gui) error) {
 func (g *Gui) MainLoop() error {
 	go func() {
 		for {
-			g.tbEvents <- termbox.PollEvent()
+			g.tbEvents <- g.qb.PollEvent()
 		}
 	}()
 
@@ -349,7 +352,7 @@ func (g *Gui) MainLoop() error {
 	if g.Mouse {
 		inputMode |= termbox.InputMouse
 	}
-	termbox.SetInputMode(inputMode)
+	g.qb.SetInputMode(inputMode)
 
 	if err := g.flush(); err != nil {
 		return err
@@ -407,9 +410,9 @@ func (g *Gui) handleEvent(ev *termbox.Event) error {
 
 // flush updates the gui, re-drawing frames and buffers.
 func (g *Gui) flush() error {
-	termbox.Clear(termbox.Attribute(g.FgColor), termbox.Attribute(g.BgColor))
+	g.qb.Clear(termbox.Attribute(g.FgColor), termbox.Attribute(g.BgColor))
 
-	maxX, maxY := termbox.Size()
+	maxX, maxY := g.qb.Size()
 	// if GUI's size has changed, we need to redraw all views
 	if maxX != g.maxX || maxY != g.maxY {
 		for _, v := range g.views {
@@ -450,7 +453,7 @@ func (g *Gui) flush() error {
 			return err
 		}
 	}
-	termbox.Flush()
+	g.qb.Flush()
 	return nil
 }
 
@@ -555,13 +558,13 @@ func (g *Gui) draw(v *View) error {
 			gMaxX, gMaxY := g.Size()
 			cx, cy := curview.x0+curview.cx+1, curview.y0+curview.cy+1
 			if cx >= 0 && cx < gMaxX && cy >= 0 && cy < gMaxY {
-				termbox.SetCursor(cx, cy)
+				g.qb.SetCursor(cx, cy)
 			} else {
-				termbox.HideCursor()
+				g.qb.HideCursor()
 			}
 		}
 	} else {
-		termbox.HideCursor()
+		g.qb.HideCursor()
 	}
 
 	v.clearRunes()

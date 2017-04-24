@@ -10,7 +10,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/gdamore/tcell/termbox"
+	termbox "github.com/gdamore/tcell/quasibox"
 )
 
 // A View is a window. It maintains its own internal buffer and cursor
@@ -28,6 +28,8 @@ type View struct {
 	viewLines []viewLine // internal representation of the view's buffer
 
 	ei *escapeInterpreter // used to decode ESC sequences on Write
+
+	g *Gui
 
 	// BgColor and FgColor allow to configure the background and foreground
 	// colors of the View.
@@ -95,7 +97,7 @@ func (l lineType) String() string {
 }
 
 // newView returns a new View object.
-func newView(name string, x0, y0, x1, y1 int, mode OutputMode) *View {
+func newView(g *Gui, name string, x0, y0, x1, y1 int, mode OutputMode) *View {
 	v := &View{
 		name:    name,
 		x0:      x0,
@@ -106,6 +108,7 @@ func newView(name string, x0, y0, x1, y1 int, mode OutputMode) *View {
 		Editor:  DefaultEditor,
 		tainted: true,
 		ei:      newEscapeInterpreter(mode),
+		g: g,
 	}
 	return v
 }
@@ -153,7 +156,7 @@ func (v *View) setRune(x, y int, ch rune, fgColor, bgColor Attribute) error {
 		bgColor = v.SelBgColor
 	}
 
-	termbox.SetCell(v.x0+x+1, v.y0+y+1, ch,
+	v.g.qb.SetCell(v.x0+x+1, v.y0+y+1, ch,
 		termbox.Attribute(fgColor), termbox.Attribute(bgColor))
 
 	return nil
@@ -405,7 +408,7 @@ func (v *View) clearRunes() {
 	maxX, maxY := v.Size()
 	for x := 0; x < maxX; x++ {
 		for y := 0; y < maxY; y++ {
-			termbox.SetCell(v.x0+x+1, v.y0+y+1, ' ',
+			v.g.qb.SetCell(v.x0+x+1, v.y0+y+1, ' ',
 				termbox.Attribute(v.FgColor), termbox.Attribute(v.BgColor))
 		}
 	}

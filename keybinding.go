@@ -4,7 +4,7 @@
 
 package gocui
 
-import "github.com/gdamore/tcell/termbox"
+import termbox "github.com/gdamore/tcell/quasibox"
 
 // Keybidings are used to link a given key-press event with a handler.
 type keybinding struct {
