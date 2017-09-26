@@ -1,4 +1,6 @@
-# GOCUI - Go Console User Interface
+# GOCUI - Go Console User Interface -- tweaked by Thyth for personal requirements. Use upstream unless you really know why.
+
+This uses a tweaked version of [tcell](https://github.com/thyth/tcell) instead of go-termbox.
 
 [![GoDoc](https://godoc.org/github.com/jroimartin/gocui?status.svg)](https://godoc.org/github.com/jroimartin/gocui)
 

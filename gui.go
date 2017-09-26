@@ -8,7 +8,7 @@ import (
 	"errors"
 	"io"
 
-	termbox "github.com/gdamore/tcell/quasibox"
+	termbox "github.com/thyth/tcell/quasibox"
 )
 
 var (

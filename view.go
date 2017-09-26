@@ -10,7 +10,7 @@ import (
 	"io"
 	"strings"
 
-	termbox "github.com/gdamore/tcell/quasibox"
+	termbox "github.com/thyth/tcell/quasibox"
 )
 
 // A View is a window. It maintains its own internal buffer and cursor

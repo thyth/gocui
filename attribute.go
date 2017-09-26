@@ -4,7 +4,7 @@
 
 package gocui
 
-import termbox "github.com/gdamore/tcell/quasibox"
+import termbox "github.com/thyth/tcell/quasibox"
 
 // Attribute represents a terminal attribute, like color, font style, etc. They
 // can be combined using bitwise OR (|). Note that it is not possible to
