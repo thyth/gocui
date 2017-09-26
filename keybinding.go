@@ -4,7 +4,7 @@
 
 package gocui
 
-import "github.com/nsf/termbox-go"
+import termbox "github.com/gdamore/tcell/quasibox"
 
 // Keybidings are used to link a given key-press event with a handler.
 type keybinding struct {
@@ -78,9 +78,9 @@ const (
 
 // Keys combinations.
 const (
-	KeyCtrlTilde      Key = Key(termbox.KeyCtrlTilde)
-	KeyCtrl2              = Key(termbox.KeyCtrl2)
-	KeyCtrlSpace          = Key(termbox.KeyCtrlSpace)
+	//KeyCtrlTilde      Key = Key(termbox.KeyCtrlTilde)
+	//KeyCtrl2              = Key(termbox.KeyCtrl2)
+	KeyCtrlSpace      Key = Key(termbox.KeyCtrlSpace)
 	KeyCtrlA              = Key(termbox.KeyCtrlA)
 	KeyCtrlB              = Key(termbox.KeyCtrlB)
 	KeyCtrlC              = Key(termbox.KeyCtrlC)
@@ -112,18 +112,18 @@ const (
 	KeyCtrlZ              = Key(termbox.KeyCtrlZ)
 	KeyEsc                = Key(termbox.KeyEsc)
 	KeyCtrlLsqBracket     = Key(termbox.KeyCtrlLsqBracket)
-	KeyCtrl3              = Key(termbox.KeyCtrl3)
-	KeyCtrl4              = Key(termbox.KeyCtrl4)
+	//KeyCtrl3              = Key(termbox.KeyCtrl3)
+	//KeyCtrl4              = Key(termbox.KeyCtrl4)
 	KeyCtrlBackslash      = Key(termbox.KeyCtrlBackslash)
-	KeyCtrl5              = Key(termbox.KeyCtrl5)
+	//KeyCtrl5              = Key(termbox.KeyCtrl5)
 	KeyCtrlRsqBracket     = Key(termbox.KeyCtrlRsqBracket)
-	KeyCtrl6              = Key(termbox.KeyCtrl6)
-	KeyCtrl7              = Key(termbox.KeyCtrl7)
-	KeyCtrlSlash          = Key(termbox.KeyCtrlSlash)
+	//KeyCtrl6              = Key(termbox.KeyCtrl6)
+	//KeyCtrl7              = Key(termbox.KeyCtrl7)
+	//KeyCtrlSlash          = Key(termbox.KeyCtrlSlash)
 	KeyCtrlUnderscore     = Key(termbox.KeyCtrlUnderscore)
 	KeySpace              = Key(termbox.KeySpace)
 	KeyBackspace2         = Key(termbox.KeyBackspace2)
-	KeyCtrl8              = Key(termbox.KeyCtrl8)
+	//KeyCtrl8              = Key(termbox.KeyCtrl8)
 )
 
 // Modifier allows to define special keys combinations. They can be used
