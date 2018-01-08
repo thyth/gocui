@@ -465,6 +465,9 @@ func (g *Gui) flush() error {
 			if g.Highlight && v == g.currentView {
 				fgColor = g.SelFgColor
 				bgColor = g.SelBgColor
+			} else if v.CustomFrameColor != 0 {
+				fgColor = v.CustomFrameColor
+				bgColor = g.BgColor
 			} else {
 				fgColor = g.FgColor
 				bgColor = g.BgColor
