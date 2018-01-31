@@ -378,14 +378,7 @@ func (g *Gui) MainLoop() error {
 		}
 	}()
 
-	inputMode := termbox.InputAlt
-	if g.InputEsc {
-		inputMode = termbox.InputEsc
-	}
-	if g.Mouse {
-		inputMode |= termbox.InputMouse
-	}
-	g.qb.SetInputMode(inputMode)
+	g.UpdateInputMode()
 
 	if err := g.flush(); err != nil {
 		return err
@@ -408,6 +401,17 @@ func (g *Gui) MainLoop() error {
 			return err
 		}
 	}
+}
+
+func (g *Gui) UpdateInputMode() {
+	inputMode := termbox.InputAlt
+	if g.InputEsc {
+		inputMode = termbox.InputEsc
+	}
+	if g.Mouse {
+		inputMode |= termbox.InputMouse
+	}
+	g.qb.SetInputMode(inputMode)
 }
 
 // consumeevents handles the remaining events in the events pool.
